@@ -1,0 +1,54 @@
+version: '3.5'
+
+services:
+  ###
+  # api
+  ###
+
+  api_test:
+    build:
+      context: .
+      dockerfile: ./images/api/Dockerfile.development
+    container_name: plutus_api_test
+    command: >
+      sh -c "yarn start"
+    depends_on:
+      - database_test
+    env_file:
+      - ./.env.test
+    healthcheck:
+      interval: 5s
+      retries: 3
+      start_period: 5s
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:${APP_PORT:-3000}/versions"]
+    image: plutus/api_test
+    networks:
+      - plutus_network_test
+    ports:
+      - "${APP_PORT:-3000}:${APP_PORT:-3000}"
+    volumes:
+      - ./package.json:/usr/app/package.json:cached
+      - ./yarn.lock:/usr/app/yarn.lock:cached
+      - ./src:/usr/app/src:cached
+
+  ###
+  # database
+  ###
+
+  database_test:
+    build:
+      context: .
+      dockerfile: ./images/database/Dockerfile.development
+    container_name: plutus_database_test
+    environment:
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASSWORD:-password}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGODB_USERNAME:-admin}
+    image: plutus/database_test
+    networks:
+      - plutus_network_test
+    ports:
+      - "${MONGODB_PORT:-27017}:${MONGODB_PORT:-27017}"
+
+networks:
+  plutus_network_test:
+    name: plutus_network_test

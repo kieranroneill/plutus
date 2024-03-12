@@ -3,8 +3,6 @@
 ####
 FROM node:20.9.0 AS installer
 
-ARG npm_token
-
 WORKDIR /usr/app
 
 COPY package.json /usr/app
@@ -17,9 +15,10 @@ RUN yarn install
 ####
 FROM node:20.9.0-alpine AS composer
 
+# install curl for healthchecks
+RUN apk --no-cache add curl
+
 WORKDIR /usr/app
 
 COPY . /usr/app
 COPY --from=installer /usr/app/node_modules /usr/app/node_modules
-
-CMD ["/bin/sh", "-c", "yarn dev"]
