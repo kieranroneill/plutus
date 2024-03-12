@@ -270,6 +270,10 @@ fabric.properties
 
 ### Miscellaneous
 
+# compiled
+/.config
+/dist
+
 # dependencies
 .npmrc
 /.pnp

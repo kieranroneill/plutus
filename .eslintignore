@@ -1,0 +1,6 @@
+.config/
+.git/
+.idea/
+.vscode/
+dist/
+node_modules/
