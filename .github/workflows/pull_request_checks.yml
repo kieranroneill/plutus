@@ -18,7 +18,7 @@ jobs:
         uses: ./.github/actions/use-yarn-dependencies
 
   ##
-  # lint and build
+  # lint, build & test
   ##
 
   lint:
@@ -45,3 +45,15 @@ jobs:
         uses: ./.github/actions/use-yarn-dependencies
       - name: "🏗️ Build"
         run: yarn build
+
+  test:
+    name: "Test"
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - name: "🛎 Checkout"
+        uses: actions/checkout@v4
+      - name: "🧶 Setup Yarn Dependencies"
+        uses: ./.github/actions/use-yarn-dependencies
+      - name: "🧪 Test"
+        run: yarn test
