@@ -21,9 +21,11 @@ services:
       - plutus_network
     ports:
       - "${APP_PORT:-3000}:${APP_PORT:-3000}"
+    volumes:
+      - ./src:/usr/app/src:cached
 
   ###
-  # database
+  # databases
   ###
 
   database:
@@ -32,6 +34,7 @@ services:
       dockerfile: ./images/database/Dockerfile.development
     container_name: plutus_database
     environment:
+      MONGO_INITDB_DATABASE: ${MONGODB_NAME:-plutus}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASSWORD:-password}
       MONGO_INITDB_ROOT_USERNAME: ${MONGODB_USERNAME:-admin}
     image: plutus/database

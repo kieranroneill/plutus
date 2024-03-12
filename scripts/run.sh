@@ -24,6 +24,8 @@ function main() {
 
   # export the env vars needed by docker compose
   export APP_PORT
+  export MONGODB_HOST
+  export MONGODB_NAME
   export MONGODB_PASSWORD
   export MONGODB_PORT
   export MONGODB_USERNAME

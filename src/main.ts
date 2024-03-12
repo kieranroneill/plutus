@@ -7,7 +7,7 @@ import morgan from 'morgan';
 import { EnvironmentVariableKeyEnum } from '@app/enums';
 
 // modules
-import AppModule from './app';
+import AppModule from '@app/modules/app/module';
 
 // types
 import type { IEnvironmentVariables, ILogLevel } from '@app/types';

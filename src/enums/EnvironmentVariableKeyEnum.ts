@@ -7,6 +7,8 @@ enum EnvironmentVariableKeyEnum {
   NodeEnv = 'NODE_ENV',
 
   // database
+  MongoDBHost = 'MONGODB_HOST',
+  MongoDBName = 'MONGODB_NAME',
   MongoDBPassword = 'MONGODB_PASSWORD',
   MongoDBPort = 'MONGODB_PORT',
   MongoDBUsername = 'MONGODB_USERNAME',
