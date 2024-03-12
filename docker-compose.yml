@@ -1,0 +1,21 @@
+version: '3.5'
+
+services:
+  ###
+  # databases
+  ###
+
+  mongodb:
+    container_name: plutus-mongodb
+    environment:
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASSWORD:-password}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGODB_USERNAME:-admin}
+    image: mongo:7.0.0
+    networks:
+      - plutus-network
+    ports:
+      - "${MONGODB_PORT:-27017}:${MONGODB_PORT:-27017}"
+
+networks:
+  plutus_network:
+    name: plutus-network

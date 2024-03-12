@@ -1,0 +1,37 @@
+{
+  "name": "plutus",
+  "version": "1.0.0",
+  "description": "A RESTful fee aggregator for scraping on-chain fee collection events",
+  "main": "dist/main.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kieranroneill/aether"
+  },
+  "author": {
+    "name": "Kieran O'Neill",
+    "email": "hello@kieranoneill",
+    "url": "https://github.com/kieranroneill"
+  },
+  "license": "GPL-3.0-or-later",
+  "private": true,
+  "keywords": [
+    "typescript",
+    "nestjs",
+    "evm",
+    "polygon"
+  ],
+  "engines": {
+    "node": ">=20.9.0"
+  },
+  "scripts": {
+    "prepare": "husky install",
+    "prettier": "prettier --config .prettierrc --write \"**/*.{js,json,ts,tsx}\""
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.1.0",
+    "@commitlint/config-conventional": "^19.1.0",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.2.2",
+    "prettier": "^3.2.5"
+  }
+}
