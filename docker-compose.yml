@@ -2,20 +2,42 @@ version: '3.5'
 
 services:
   ###
-  # databases
+  # api
   ###
 
-  mongodb:
-    container_name: plutus-mongodb
+  api:
+    build:
+      context: .
+      dockerfile: ./images/api/Dockerfile.development
+    container_name: plutus_api
+    depends_on:
+      - database
+    env_file:
+      - ./.config/.env
+    image: plutus/api
+    networks:
+      - plutus_network
+    ports:
+      - "${APP_PORT:-3000}:${APP_PORT:-3000}"
+
+  ###
+  # database
+  ###
+
+  database:
+    build:
+      context: .
+      dockerfile: ./images/database/Dockerfile.development
+    container_name: plutus_database
     environment:
       MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASSWORD:-password}
       MONGO_INITDB_ROOT_USERNAME: ${MONGODB_USERNAME:-admin}
-    image: mongo:7.0.0
+    image: plutus/database
     networks:
-      - plutus-network
+      - plutus_network
     ports:
       - "${MONGODB_PORT:-27017}:${MONGODB_PORT:-27017}"
 
 networks:
   plutus_network:
-    name: plutus-network
+    name: plutus_network
