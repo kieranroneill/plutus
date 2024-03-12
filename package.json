@@ -24,12 +24,14 @@
     "node": ">=20.9.0"
   },
   "scripts": {
-    "build": "APP_VERSION=$npm_package_version nest build",
-    "dev": "APP_VERSION=$npm_package_version nest start --watch",
+    "nest:build": "APP_VERSION=$npm_package_version nest build",
+    "nest:dev": "APP_VERSION=$npm_package_version nest start --watch",
+    "nest:start": "APP_VERSION=$npm_package_version nest start",
     "lint": "eslint . --ext .ts --ext .js",
     "prepare": "husky install",
     "prettier": "prettier --config .prettierrc --write \"**/*.{js,json,ts}\"",
-    "start": "APP_VERSION=$npm_package_version nest start",
+    "setup": "./scripts/setup.sh",
+    "start": "./scripts/run.sh",
     "test": "./scripts/test.sh"
   },
   "devDependencies": {

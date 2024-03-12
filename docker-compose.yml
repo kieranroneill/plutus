@@ -10,7 +10,7 @@ services:
       context: .
       dockerfile: ./images/api/Dockerfile.development
     command: >
-      sh -c "yarn dev"
+      sh -c "yarn nest:dev"
     container_name: plutus_api
     depends_on:
       - database
