@@ -44,7 +44,7 @@ jobs:
       - name: "🧶 Setup Yarn Dependencies"
         uses: ./.github/actions/use-yarn-dependencies
       - name: "🏗️ Build"
-        run: yarn build
+        run: yarn nest:build
 
   test:
     name: "Test"
