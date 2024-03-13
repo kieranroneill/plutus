@@ -49,8 +49,9 @@ export default class FeeCollectdEventListenerService implements OnModuleInit {
     toBlockNumber,
   }: IQueryFeesCollectedEventsOptions): Promise<void> {
     const _functionName: string = 'queryFeesCollectedEventsBetweenBlocks';
-    let newFromBlockNumber: bigint;
+    let chainId: string;
     let events: IFeesCollectedEvent[];
+    let newFromBlockNumber: bigint;
 
     // we want to stop if the from block is greater than or equal to the to block
     if (fromBlockNumber >= toBlockNumber) {
@@ -74,6 +75,21 @@ export default class FeeCollectdEventListenerService implements OnModuleInit {
 
     this.logger.debug(
       `${__filename}#${_functionName}: found "${events.length}" events between block ${String(fromBlockNumber)} and block ${String(toBlockNumber > newFromBlockNumber ? newFromBlockNumber : toBlockNumber)}`
+    );
+
+    chainId = createChainId(chainConfig);
+
+    await this.feeRepositoryService.bulkCreate(
+      events.map(
+        ({ blockNumber, integrator, integratorFee, lifiFee, token }) => ({
+          blockNumber: String(blockNumber),
+          chainId,
+          integrator,
+          integratorFee: String(integratorFee),
+          lifiFee: String(lifiFee),
+          token,
+        })
+      )
     );
 
     return await this.queryFeesCollectedEventsBetweenBlocks({

@@ -1,4 +1,5 @@
 interface IFeesCollectedEvent {
+  blockNumber: bigint;
   integrator: string;
   integratorFee: bigint;
   lifiFee: bigint;

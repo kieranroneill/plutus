@@ -17,18 +17,16 @@ export default class FeeRepositoryService {
     private readonly model: Model<IFeeDocument>
   ) {}
 
-  public async create(dto: CreateDTO): Promise<IFeeDocument> {
-    const document: IFeeDocument = new this.model(dto);
-
-    return await document.save();
+  public async bulkCreate(dtos: CreateDTO[]): Promise<IFeeDocument[]> {
+    return await this.model.create(dtos);
   }
 
   public async findLatestBlockNumber(): Promise<bigint | null> {
     const document: IFeeDocument | null = await this.model
       .findOne()
       .sort({
-        blockNumber: 'asc',
-        createdAt: 'asc',
+        blockNumber: -1,
+        createdAt: -1,
       })
       .exec();
 

@@ -12,6 +12,7 @@ export default function mapEthersEventLogToFeesCollectedEvent({
   const [token, integrator, integratorFee, lifiFee] = log.args;
 
   return {
+    blockNumber: BigInt(event.blockNumber),
     integrator,
     integratorFee,
     lifiFee,
