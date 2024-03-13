@@ -1,1 +1,1 @@
-export { default as FeeCollectEventSchema } from './FeeCollectEventSchema';
+export { default as FeeSchema } from './FeeSchema';

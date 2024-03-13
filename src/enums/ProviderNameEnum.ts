@@ -1,8 +1,6 @@
 enum ProviderNameEnum {
-  // models
-  FeeCollectEventModel = 'FeeCollectEventModel',
-
   DatabaseConnection = 'DatabaseConnection',
+  FeeModel = 'FeeModel',
 }
 
 export default ProviderNameEnum;

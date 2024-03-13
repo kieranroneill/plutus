@@ -9,7 +9,7 @@ import type { IEnvironmentVariables } from '@app/types';
 import type { IVersionsResponseBody } from './types';
 
 @Injectable()
-export default class Service {
+export default class VersionsService {
   constructor(
     private readonly configService: ConfigService<IEnvironmentVariables, true>
   ) {}

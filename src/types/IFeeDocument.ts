@@ -1,10 +1,12 @@
 import { Document } from 'mongoose';
 
-interface IFeeCollectEventSchema extends Document {
+interface IFeeDocument extends Document {
+  blockNumber: string;
+  chainId: string;
   integrator: string;
   integratorFee: string;
   lifiFee: string;
   token: string;
 }
 
-export default IFeeCollectEventSchema;
+export default IFeeDocument;

@@ -6,18 +6,18 @@ import { Mongoose } from 'mongoose';
 import { ProviderNameEnum } from '@app/enums';
 
 // schemas
-import { FeeCollectEventSchema } from '@app/schemas';
+import { FeeSchema } from '@app/schemas';
 
-const Provider: FactoryProvider = {
+const FeeRepositoryProvider: FactoryProvider = {
   inject: [ProviderNameEnum.DatabaseConnection],
-  provide: ProviderNameEnum.FeeCollectEventModel,
+  provide: ProviderNameEnum.FeeModel,
   useFactory: async (mongoose: Mongoose) =>
-    getModelForClass(FeeCollectEventSchema, {
+    getModelForClass(FeeSchema, {
       existingMongoose: mongoose,
       options: {
-        customName: 'fee_collect_event',
+        customName: 'fee',
       },
     }),
 };
 
-export default Provider;
+export default FeeRepositoryProvider;

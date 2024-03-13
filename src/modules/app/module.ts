@@ -1,4 +1,4 @@
-import { Logger, Module as NestModule } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
 
@@ -6,14 +6,13 @@ import * as Joi from 'joi';
 import { EnvironmentVariableKeyEnum } from '@app/enums';
 
 // modules
-import FeeCollectEventRepositoryModule from '@app/modules/fee-collect-event-repository/module';
+import FeesCollectedEventListenerModule from '@app/modules/fees-collected-event-listener/module';
 import VersionsModule from '@app/modules/versions/module';
 
 // types
 import type { IEnvironmentVariables } from '@app/types';
-import Service from '../versions/service';
 
-@NestModule({
+@Module({
   imports: [
     /**
      * api
@@ -21,9 +20,9 @@ import Service from '../versions/service';
     VersionsModule,
 
     /**
-     * repository
+     * listeners
      */
-    FeeCollectEventRepositoryModule,
+    FeesCollectedEventListenerModule,
 
     /**
      * misc
@@ -55,6 +54,5 @@ import Service from '../versions/service';
       }),
     }),
   ],
-  providers: [Logger, Service],
 })
-export default class Module {}
+export default class AppModule {}

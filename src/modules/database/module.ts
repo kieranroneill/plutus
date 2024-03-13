@@ -1,10 +1,10 @@
-import { Logger, Module as NestModule } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 
 // providers
-import Provider from './provider';
+import DatabaseProvider from './provider';
 
-@NestModule({
-  exports: [Provider],
-  providers: [Logger, Provider],
+@Module({
+  exports: [DatabaseProvider],
+  providers: [DatabaseProvider, Logger],
 })
-export default class Module {}
+export default class DatabaseModule {}

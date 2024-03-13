@@ -8,7 +8,7 @@ import { EnvironmentVariableKeyEnum, ProviderNameEnum } from '@app/enums';
 // types
 import { IEnvironmentVariables } from '@app/types';
 
-const Provider: FactoryProvider<Promise<Mongoose>> = {
+const DatabaseProvider: FactoryProvider<Promise<Mongoose>> = {
   inject: [ConfigService, Logger],
   provide: ProviderNameEnum.DatabaseConnection,
   useFactory: async (
@@ -49,4 +49,4 @@ const Provider: FactoryProvider<Promise<Mongoose>> = {
   },
 };
 
-export default Provider;
+export default DatabaseProvider;

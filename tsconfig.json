@@ -17,6 +17,9 @@
     "noImplicitReturns": true,
     "outDir": "./dist",
     "paths": {
+      "@app/abis/*": ["src/abis/*"],
+      "@app/configs": ["src/configs"],
+      "@app/constants": ["src/constants"],
       "@app/enums": ["src/enums"],
       "@app/modules/*": ["src/modules/*"],
       "@app/schemas": ["src/schemas"],
