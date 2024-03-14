@@ -1,13 +1,15 @@
-import { Logger, Module as NestModule } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 
 // controllers
-import Controller from './controller';
+import VersionsController from './controller';
 
-// services
-import Service from './service';
+// providers
+import DatabaseModule from '@app/modules/database/module';
+import VersionsService from './service';
 
-@NestModule({
-  controllers: [Controller],
-  providers: [Logger, Service],
+@Module({
+  imports: [DatabaseModule],
+  controllers: [VersionsController],
+  providers: [Logger, VersionsService],
 })
-export default class Module {}
+export default class VersionsModule {}

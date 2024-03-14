@@ -17,8 +17,13 @@
     "noImplicitReturns": true,
     "outDir": "./dist",
     "paths": {
+      "@app/abis/*": ["src/abis/*"],
+      "@app/configs": ["src/configs"],
+      "@app/constants": ["src/constants"],
+      "@app/dtos": ["src/dtos"],
       "@app/enums": ["src/enums"],
       "@app/modules/*": ["src/modules/*"],
+      "@app/schemas": ["src/schemas"],
       "@app/types": ["src/types"],
       "@app/utils/*": ["src/utils/*"]
     },
@@ -29,6 +34,7 @@
     "strictBindCallApply": false,
     "strictNullChecks": false,
     "strictPropertyInitialization": false,
-    "target": "ES2021"
+    "target": "ES2021",
+    "types": ["node"]
   }
 }

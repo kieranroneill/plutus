@@ -1,22 +1,32 @@
-import { Module as NestModule } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 import * as Joi from 'joi';
 
 // enums
 import { EnvironmentVariableKeyEnum } from '@app/enums';
 
 // modules
+import FeesCollectedEventListenerModule from '@app/modules/fees-collected-event-listener/module';
 import VersionsModule from '@app/modules/versions/module';
+
+// providers
+import AppService from './service';
 
 // types
 import type { IEnvironmentVariables } from '@app/types';
 
-@NestModule({
+@Module({
   imports: [
     /**
      * api
      */
     VersionsModule,
+
+    /**
+     * listeners
+     */
+    FeesCollectedEventListenerModule,
 
     /**
      * misc
@@ -38,8 +48,17 @@ import type { IEnvironmentVariables } from '@app/types';
           .default('error')
           .valid('debug', 'error', 'info', 'silent', 'warn'),
         [EnvironmentVariableKeyEnum.NodeEnv]: Joi.string().required(),
+
+        // database
+        [EnvironmentVariableKeyEnum.MongoDBHost]: Joi.string().required(),
+        [EnvironmentVariableKeyEnum.MongoDBName]: Joi.string().required(),
+        [EnvironmentVariableKeyEnum.MongoDBPassword]: Joi.string().required(),
+        [EnvironmentVariableKeyEnum.MongoDBPort]: Joi.string().required(),
+        [EnvironmentVariableKeyEnum.MongoDBUsername]: Joi.string().required(),
       }),
     }),
+    EventEmitterModule.forRoot(),
   ],
+  providers: [AppService, Logger],
 })
-export default class Module {}
+export default class AppModule {}

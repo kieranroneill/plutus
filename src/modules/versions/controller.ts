@@ -1,4 +1,4 @@
-import { Controller as NestController, Get } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 
 // enums
 import { APIPathEnum } from '@app/enums';
@@ -9,8 +9,8 @@ import Service from './service';
 // types
 import type { IVersionsResponseBody } from './types';
 
-@NestController(APIPathEnum.Versions)
-export default class Controller {
+@Controller(APIPathEnum.Versions)
+export default class VersionsController {
   constructor(private readonly service: Service) {}
 
   @Get()

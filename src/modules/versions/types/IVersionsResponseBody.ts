@@ -1,6 +1,10 @@
+// types
+import type IDatabaseConnectionResponseBody from './IDatabaseConnectionResponseBody';
+
 interface IVersionsResponseBody {
-  name: string | null;
+  databases: IDatabaseConnectionResponseBody[];
   environment: string | null;
+  name: string | null;
   version: string | null;
 }
 

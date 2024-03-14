@@ -1,2 +1,2 @@
-export { default as Service } from './service';
+export { default as VersionsService } from './service';
 export * from './types';
