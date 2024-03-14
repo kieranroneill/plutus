@@ -60,7 +60,8 @@ function main {
 
   # if the services are up and running, we can run tests
   if [[ "${api_health}" == "healthy" ]]; then
-    yarn jest
+    yarn test:e2e
+    yarn test:unit
   else
     docker logs --details plutus_api_test
   fi

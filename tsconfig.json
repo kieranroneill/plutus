@@ -20,6 +20,7 @@
       "@app/abis/*": ["src/abis/*"],
       "@app/configs": ["src/configs"],
       "@app/constants": ["src/constants"],
+      "@app/dtos": ["src/dtos"],
       "@app/enums": ["src/enums"],
       "@app/modules/*": ["src/modules/*"],
       "@app/schemas": ["src/schemas"],
@@ -33,6 +34,7 @@
     "strictBindCallApply": false,
     "strictNullChecks": false,
     "strictPropertyInitialization": false,
-    "target": "ES2021"
+    "target": "ES2021",
+    "types": ["node"]
   }
 }

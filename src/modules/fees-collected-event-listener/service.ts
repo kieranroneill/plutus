@@ -1,10 +1,5 @@
-import {
-  Inject,
-  Injectable,
-  Logger,
-  LoggerService,
-  OnModuleInit,
-} from '@nestjs/common';
+import { Inject, Injectable, Logger, LoggerService } from '@nestjs/common';
+import { OnEvent } from '@nestjs/event-emitter';
 import { JsonRpcProvider } from 'ethers';
 
 // configs
@@ -16,8 +11,15 @@ import {
   QUERY_EVENT_TIMEOUT_IN_MILLISECONDS,
 } from '@app/constants';
 
+// dtos
+import { CreateDTO as CreateFeeDTO } from '@app/modules/fee-repository';
+import { FeesCollectedQueryEventPayloadDTO } from './dtos';
+
+// enums
+import { EventNameEnum } from '@app/enums';
+
 // providers
-import { Service as FeeRepositoryService } from '@app/modules/fee-repository';
+import { FeeRepositoryService } from '@app/modules/fee-repository';
 
 // types
 import type { IChainConfig, IFeesCollectedEvent } from '@app/types';
@@ -28,7 +30,7 @@ import createChainId from '@app/utils/createChainId';
 import queryFeesCollectedEventsWithDelay from '@app/utils/queryFeesCollectedEventsWithDelay';
 
 @Injectable()
-export default class FeeCollectdEventListenerService implements OnModuleInit {
+export default class FeeCollectdEventListenerService {
   constructor(
     private readonly feeRepositoryService: FeeRepositoryService,
     @Inject(Logger) private readonly logger: LoggerService
@@ -56,7 +58,7 @@ export default class FeeCollectdEventListenerService implements OnModuleInit {
     // we want to stop if the from block is greater than or equal to the to block
     if (fromBlockNumber >= toBlockNumber) {
       this.logger.debug(
-        `${__filename}#${_functionName}: from block number ${String(fromBlockNumber)} is greater than or equal to the ${String(toBlockNumber)}, exiting`
+        `${FeeCollectdEventListenerService.name}#${_functionName}: from block number ${String(fromBlockNumber)} is greater than or equal to the ${String(toBlockNumber)}, exiting`
       );
 
       return;
@@ -73,24 +75,28 @@ export default class FeeCollectdEventListenerService implements OnModuleInit {
         toBlockNumber > newFromBlockNumber ? newFromBlockNumber : toBlockNumber,
     });
 
-    this.logger.debug(
-      `${__filename}#${_functionName}: found "${events.length}" events between block ${String(fromBlockNumber)} and block ${String(toBlockNumber > newFromBlockNumber ? newFromBlockNumber : toBlockNumber)}`
-    );
+    // if we have found events, add them to the database
+    if (events.length > 0) {
+      this.logger.debug(
+        `${FeeCollectdEventListenerService.name}#${_functionName}: found "${events.length}" events between block ${String(fromBlockNumber)} and block ${String(toBlockNumber > newFromBlockNumber ? newFromBlockNumber : toBlockNumber)}`
+      );
 
-    chainId = createChainId(chainConfig);
+      chainId = createChainId(chainConfig);
 
-    await this.feeRepositoryService.bulkCreate(
-      events.map(
-        ({ blockNumber, integrator, integratorFee, lifiFee, token }) => ({
-          blockNumber: String(blockNumber),
-          chainId,
-          integrator,
-          integratorFee: String(integratorFee),
-          lifiFee: String(lifiFee),
-          token,
-        })
-      )
-    );
+      await this.feeRepositoryService.bulkCreate(
+        events.map(
+          ({ blockNumber, integrator, integratorFee, lifiFee, token }) =>
+            new CreateFeeDTO({
+              blockNumber: String(blockNumber),
+              chainId,
+              integrator,
+              integratorFee: String(integratorFee),
+              lifiFee: String(lifiFee),
+              token,
+            })
+        )
+      );
+    }
 
     return await this.queryFeesCollectedEventsBetweenBlocks({
       chainConfig,
@@ -99,29 +105,39 @@ export default class FeeCollectdEventListenerService implements OnModuleInit {
     });
   }
 
-  public async onModuleInit(): Promise<void> {
-    const _functionName: string = 'onModuleInit';
+  @OnEvent(EventNameEnum.FeesCollectedQuery)
+  public async handleFeesCollectedQueryEvent({
+    chainId,
+  }: FeesCollectedQueryEventPayloadDTO): Promise<void> {
+    const _functionName: string = 'handleFeesCollectedQueryEvent';
+    const chainConfig: IChainConfig | null =
+      chains.find((value) => createChainId(value) === chainId) || null;
+    let latestFeeBlockNumber: bigint | null;
+    let latestBlockNumber: bigint;
 
-    await Promise.all(
-      chains.map(async (chainConfig) => {
-        const latestFeeBlockNumber: bigint | null =
-          await this.feeRepositoryService.findLatestBlockNumber();
-        const latestBlockNumber: bigint =
-          await this.getLatestBlockNumber(chainConfig);
+    if (!chainConfig) {
+      this.logger.debug(
+        `${FeeCollectdEventListenerService.name}#${_functionName}: no chain found for "${chainId}", ignoring`
+      );
 
-        this.logger.debug(
-          `${__filename}#${_functionName}: fetching events between block ${String(latestFeeBlockNumber || chainConfig.feesCollectedContract.genesisBlockNumber)} and ${String(latestBlockNumber)}`
-        );
+      return;
+    }
 
-        // recursively query the fee collected events and save them until the latest block number is hit
-        return this.queryFeesCollectedEventsBetweenBlocks({
-          chainConfig,
-          fromBlockNumber:
-            latestFeeBlockNumber ||
-            chainConfig.feesCollectedContract.genesisBlockNumber,
-          toBlockNumber: latestBlockNumber,
-        });
-      })
+    latestFeeBlockNumber =
+      await this.feeRepositoryService.findLatestBlockNumber();
+    latestBlockNumber = await this.getLatestBlockNumber(chainConfig);
+
+    this.logger.debug(
+      `${FeeCollectdEventListenerService.name}#${_functionName}: fetching events between block ${String(latestFeeBlockNumber || chainConfig.feesCollectedContract.genesisBlockNumber)} and ${String(latestBlockNumber)}`
     );
+
+    // recursively query the fee collected events and save them until the latest block number is hit
+    return this.queryFeesCollectedEventsBetweenBlocks({
+      chainConfig,
+      fromBlockNumber:
+        latestFeeBlockNumber ||
+        chainConfig.feesCollectedContract.genesisBlockNumber,
+      toBlockNumber: latestBlockNumber,
+    });
   }
 }

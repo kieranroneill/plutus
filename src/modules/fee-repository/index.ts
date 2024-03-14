@@ -1,2 +1,2 @@
-export { default as Service } from './service';
+export { default as FeeRepositoryService } from './service';
 export * from './dtos';

@@ -1,5 +1,6 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 import * as Joi from 'joi';
 
 // enums
@@ -8,6 +9,9 @@ import { EnvironmentVariableKeyEnum } from '@app/enums';
 // modules
 import FeesCollectedEventListenerModule from '@app/modules/fees-collected-event-listener/module';
 import VersionsModule from '@app/modules/versions/module';
+
+// providers
+import AppService from './service';
 
 // types
 import type { IEnvironmentVariables } from '@app/types';
@@ -53,6 +57,8 @@ import type { IEnvironmentVariables } from '@app/types';
         [EnvironmentVariableKeyEnum.MongoDBUsername]: Joi.string().required(),
       }),
     }),
+    EventEmitterModule.forRoot(),
   ],
+  providers: [AppService, Logger],
 })
 export default class AppModule {}
