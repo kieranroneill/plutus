@@ -71,6 +71,7 @@ export default class FeeCollectdEventListenerService implements OnModuleInit {
     chainConfig,
     provider,
   }: IAddFeesCollectedEventListenerOptions): Promise<void> {
+    const _functionName: string = 'addFeesCollectedEventListener';
     const chainId: string = createChainId(chainConfig);
     let contract: Contract;
     let feeCollectedEventListener: IFeesCollectedEventListener | null =
@@ -91,7 +92,11 @@ export default class FeeCollectdEventListenerService implements OnModuleInit {
         integratorFee: bigint,
         lifiFee: bigint,
         event: EventLog | Log
-      ) =>
+      ) => {
+        this.logger.debug(
+          `${FeeCollectdEventListenerService.name}#${_functionName}: fees collected event emitted for chain "${chainConfig.canonicalName}" on block ${String(event.blockNumber)}`
+        );
+
         await this.feeRepositoryService.create({
           blockNumber: String(event.blockNumber),
           chainId,
@@ -99,7 +104,8 @@ export default class FeeCollectdEventListenerService implements OnModuleInit {
           integratorFee: String(integratorFee),
           lifiFee: String(lifiFee),
           token,
-        }),
+        });
+      },
     };
     contract = createFeesCollectedContract({
       contractAddress: chainConfig.feesCollectedContract.contractAddress,
@@ -112,6 +118,39 @@ export default class FeeCollectdEventListenerService implements OnModuleInit {
     this.feeCollectedEventListeners.push(feeCollectedEventListener);
 
     return;
+  }
+
+  private initializeWebsocketProvider(
+    chainConfig: IChainConfig
+  ): IChainWebsocketProvider | null {
+    const _functionName: string = 'initializeWebsocketProvider';
+    const chainId: string = createChainId(chainConfig);
+    let websocketProvider: IChainWebsocketProvider | null =
+      this.websocketProviders.find((value) => value.chainId === chainId) ||
+      null;
+
+    if (websocketProvider) {
+      return websocketProvider;
+    }
+
+    try {
+      websocketProvider = {
+        chainId,
+        provider: new WebSocketProvider(chainConfig.websocketsURL),
+      };
+
+      // add the provider
+      this.websocketProviders.push(websocketProvider);
+
+      return websocketProvider;
+    } catch (error) {
+      this.logger.error(
+        `${FeeCollectdEventListenerService.name}#${_functionName}: `,
+        error
+      );
+
+      return null;
+    }
   }
 
   /**
@@ -225,26 +264,18 @@ export default class FeeCollectdEventListenerService implements OnModuleInit {
 
   public async onModuleInit(): Promise<void> {
     await Promise.all(
-      chains.map(async (chainConfig) => {
-        const chainId: string = createChainId(chainConfig);
-        let websocketProvider: IChainWebsocketProvider | null =
-          this.websocketProviders.find((value) => value.chainId === chainId) ||
-          null;
+      chains.map(async (value) => {
+        const websocketProvider: IChainWebsocketProvider | null =
+          this.initializeWebsocketProvider(value);
 
-        // if we don't have a provider, create a new one
+        // TODO: implement a retry feature
         if (!websocketProvider) {
-          websocketProvider = {
-            chainId,
-            provider: new WebSocketProvider(chainConfig.websocketsURL),
-          };
-
-          // add the provider
-          this.websocketProviders.push(websocketProvider);
+          return;
         }
 
         // start listening to fees collected events
         return await this.addFeesCollectedEventListener({
-          chainConfig,
+          chainConfig: value,
           provider: websocketProvider.provider,
         });
       })
