@@ -117,18 +117,18 @@ export default class FeeCollectdEventListenerService {
 
     if (!chainConfig) {
       this.logger.debug(
-        `${FeeCollectdEventListenerService.name}#${_functionName}: no chain found for "${chainId}", ignoring`
+        `${FeeCollectdEventListenerService.name}#${_functionName}: no chain config found for chain id "${chainId}", ignoring`
       );
 
       return;
     }
 
     latestFeeBlockNumber =
-      await this.feeRepositoryService.findLatestBlockNumber();
+      await this.feeRepositoryService.findLatestBlockNumberForChainId(chainId);
     latestBlockNumber = await this.getLatestBlockNumber(chainConfig);
 
     this.logger.debug(
-      `${FeeCollectdEventListenerService.name}#${_functionName}: fetching events between block ${String(latestFeeBlockNumber || chainConfig.feesCollectedContract.genesisBlockNumber)} and ${String(latestBlockNumber)}`
+      `${FeeCollectdEventListenerService.name}#${_functionName}: fetching fee collected events for chain "${chainConfig.canonicalName}", between block numbers ${String(latestFeeBlockNumber || chainConfig.feesCollectedContract.genesisBlockNumber)} and ${String(latestBlockNumber)}`
     );
 
     // recursively query the fee collected events and save them until the latest block number is hit

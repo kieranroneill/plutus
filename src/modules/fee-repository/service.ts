@@ -21,9 +21,13 @@ export default class FeeRepositoryService {
     return await this.model.create(dtos);
   }
 
-  public async findLatestBlockNumber(): Promise<bigint | null> {
+  public async findLatestBlockNumberForChainId(
+    chainId: string
+  ): Promise<bigint | null> {
     const document: IFeeDocument | null = await this.model
-      .findOne()
+      .findOne({
+        chainId,
+      })
       .sort({
         blockNumber: -1,
         createdAt: -1,
