@@ -21,6 +21,10 @@ export default class FeeRepositoryService {
     return await this.model.create(dtos);
   }
 
+  public async create(dto: CreateDTO): Promise<IFeeDocument> {
+    return await this.model.create(dto);
+  }
+
   public async findLatestBlockNumberForChainId(
     chainId: string
   ): Promise<bigint | null> {

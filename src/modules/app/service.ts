@@ -4,7 +4,6 @@ import {
   Logger,
   LoggerService,
   OnApplicationBootstrap,
-  OnModuleInit,
 } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
@@ -30,18 +29,19 @@ export default class AppService implements OnApplicationBootstrap {
   public onApplicationBootstrap(): void {
     const _functionName: string = 'onApplicationBootstrap';
 
-    // omit an event for each chain
-    chains.forEach((value) => {
-      const chainId: string = createChainId(value);
+    chains.forEach((chainConfig) => {
+      const chainId: string = createChainId(chainConfig);
+
+      // omit an event to start getting historic events
       const success: boolean = this.eventEmitter.emit(
-        EventNameEnum.FeesCollectedQuery,
+        EventNameEnum.FeesCollectedEventQuery,
         new FeesCollectedQueryEventPayloadDTO({
           chainId,
         })
       );
 
       this.logger.debug(
-        `${AppService.name}#${_functionName}: event "${EventNameEnum.FeesCollectedQuery}" for chain "${chainId}" emitted ${success ? 'successfully' : 'unsuccessfully'}`
+        `${AppService.name}#${_functionName}: event "${EventNameEnum.FeesCollectedEventQuery}" for chain "${chainId}" emitted ${success ? 'successfully' : 'unsuccessfully'}`
       );
     });
   }

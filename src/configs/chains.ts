@@ -12,6 +12,7 @@ const configs: IChainConfig[] = [
     reference: '137',
     rpcURL: 'https://polygon-rpc.com',
     testnet: false,
+    websocketsURL: 'wss://rpc-mainnet.matic.network',
   },
 ];
 

@@ -8,6 +8,7 @@ interface IChainConfig {
   reference: string;
   rpcURL: string;
   testnet: boolean;
+  websocketsURL: string;
 }
 
 export default IChainConfig;

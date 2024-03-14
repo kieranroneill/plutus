@@ -1,14 +1,20 @@
-import { Inject, Injectable, Logger, LoggerService } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  Logger,
+  LoggerService,
+  OnModuleInit,
+} from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
-import { JsonRpcProvider } from 'ethers';
+import { Contract, EventLog, Log, WebSocketProvider } from 'ethers';
 
 // configs
 import { chains } from '@app/configs';
 
 // constants
 import {
+  QUERY_EVENT_DELAY_IN_MILLISECONDS,
   QUERY_EVENT_MAX_LIMIT,
-  QUERY_EVENT_TIMEOUT_IN_MILLISECONDS,
 } from '@app/constants';
 
 // dtos
@@ -22,29 +28,101 @@ import { EventNameEnum } from '@app/enums';
 import { FeeRepositoryService } from '@app/modules/fee-repository';
 
 // types
-import type { IChainConfig, IFeesCollectedEvent } from '@app/types';
-import type { IQueryFeesCollectedEventsOptions } from './types';
+import type {
+  IChainConfig,
+  IChainWebsocketProvider,
+  IFeesCollectedEvent,
+} from '@app/types';
+import type {
+  IAddFeesCollectedEventListenerOptions,
+  IFeesCollectedEventListener,
+  IQueryFeesCollectedEventsOptions,
+} from './types';
 
 // utils
 import createChainId from '@app/utils/createChainId';
+import createFeesCollectedContract from '@app/utils/createFeesCollectedContract';
+import getLatestBlockNumberForChain from '@app/utils/getLatestBlockNumberForChain';
 import queryFeesCollectedEventsWithDelay from '@app/utils/queryFeesCollectedEventsWithDelay';
 
 @Injectable()
-export default class FeeCollectdEventListenerService {
+export default class FeeCollectdEventListenerService implements OnModuleInit {
+  private feeCollectedEventListeners: IFeesCollectedEventListener[];
+  private websocketProviders: IChainWebsocketProvider[];
+
   constructor(
     private readonly feeRepositoryService: FeeRepositoryService,
     @Inject(Logger) private readonly logger: LoggerService
-  ) {}
-
-  private async getLatestBlockNumber({
-    rpcURL,
-  }: IChainConfig): Promise<bigint> {
-    const provider: JsonRpcProvider = new JsonRpcProvider(rpcURL);
-    const blockNumber: number = await provider.getBlockNumber();
-
-    return BigInt(blockNumber);
+  ) {
+    this.feeCollectedEventListeners = [];
+    this.websocketProviders = [];
   }
 
+  /**
+   * private functions
+   **/
+
+  /**
+   * Checks for a fees collected listener for a chain and adds it if it doesn't exist.
+   * @param {IOptions} options - the chain configuration and a websocket provider.
+   * @private
+   */
+  private async addFeesCollectedEventListener({
+    chainConfig,
+    provider,
+  }: IAddFeesCollectedEventListenerOptions): Promise<void> {
+    const chainId: string = createChainId(chainConfig);
+    let contract: Contract;
+    let feeCollectedEventListener: IFeesCollectedEventListener | null =
+      this.feeCollectedEventListeners.find(
+        (value) => value.chainId === chainId
+      ) || null;
+
+    // if we already have a listener no need to add a new one
+    if (feeCollectedEventListener) {
+      return;
+    }
+
+    feeCollectedEventListener = {
+      chainId,
+      listener: async (
+        token: string,
+        integrator: string,
+        integratorFee: bigint,
+        lifiFee: bigint,
+        event: EventLog | Log
+      ) =>
+        await this.feeRepositoryService.create({
+          blockNumber: String(event.blockNumber),
+          chainId,
+          integrator,
+          integratorFee: String(integratorFee),
+          lifiFee: String(lifiFee),
+          token,
+        }),
+    };
+    contract = createFeesCollectedContract({
+      contractAddress: chainConfig.feesCollectedContract.contractAddress,
+      provider,
+    });
+
+    // start listening to the event
+    await contract.on('FeesCollected', feeCollectedEventListener.listener);
+
+    this.feeCollectedEventListeners.push(feeCollectedEventListener);
+
+    return;
+  }
+
+  /**
+   * Gets all the historical event data for the FeesCollected events. This function gets the starting point by the
+   * last block number collected in the database or the genesis block from the chain config. The ending point is the
+   * latest block in the chain. It then recursively gets the events between these two points, narrowing the block range
+   * by 100 blocks. Any events that found are saved to the database.
+   * @param {IQueryFeesCollectedEventsOptions} options - the chain configuration and the starting and ending block
+   * numbers
+   * @private
+   */
   private async queryFeesCollectedEventsBetweenBlocks({
     chainConfig,
     fromBlockNumber,
@@ -68,7 +146,7 @@ export default class FeeCollectdEventListenerService {
 
     events = await queryFeesCollectedEventsWithDelay({
       chainConfig,
-      delay: QUERY_EVENT_TIMEOUT_IN_MILLISECONDS,
+      delay: QUERY_EVENT_DELAY_IN_MILLISECONDS,
       fromBlockNumber: fromBlockNumber,
       logger: this.logger,
       toBlockNumber:
@@ -105,7 +183,11 @@ export default class FeeCollectdEventListenerService {
     });
   }
 
-  @OnEvent(EventNameEnum.FeesCollectedQuery)
+  /**
+   * public functions
+   **/
+
+  @OnEvent(EventNameEnum.FeesCollectedEventQuery)
   public async handleFeesCollectedQueryEvent({
     chainId,
   }: FeesCollectedQueryEventPayloadDTO): Promise<void> {
@@ -125,7 +207,7 @@ export default class FeeCollectdEventListenerService {
 
     latestFeeBlockNumber =
       await this.feeRepositoryService.findLatestBlockNumberForChainId(chainId);
-    latestBlockNumber = await this.getLatestBlockNumber(chainConfig);
+    latestBlockNumber = await getLatestBlockNumberForChain(chainConfig);
 
     this.logger.debug(
       `${FeeCollectdEventListenerService.name}#${_functionName}: fetching fee collected events for chain "${chainConfig.canonicalName}", between block numbers ${String(latestFeeBlockNumber || chainConfig.feesCollectedContract.genesisBlockNumber)} and ${String(latestBlockNumber)}`
@@ -139,5 +221,33 @@ export default class FeeCollectdEventListenerService {
         chainConfig.feesCollectedContract.genesisBlockNumber,
       toBlockNumber: latestBlockNumber,
     });
+  }
+
+  public async onModuleInit(): Promise<void> {
+    await Promise.all(
+      chains.map(async (chainConfig) => {
+        const chainId: string = createChainId(chainConfig);
+        let websocketProvider: IChainWebsocketProvider | null =
+          this.websocketProviders.find((value) => value.chainId === chainId) ||
+          null;
+
+        // if we don't have a provider, create a new one
+        if (!websocketProvider) {
+          websocketProvider = {
+            chainId,
+            provider: new WebSocketProvider(chainConfig.websocketsURL),
+          };
+
+          // add the provider
+          this.websocketProviders.push(websocketProvider);
+        }
+
+        // start listening to fees collected events
+        return await this.addFeesCollectedEventListener({
+          chainConfig,
+          provider: websocketProvider.provider,
+        });
+      })
+    );
   }
 }

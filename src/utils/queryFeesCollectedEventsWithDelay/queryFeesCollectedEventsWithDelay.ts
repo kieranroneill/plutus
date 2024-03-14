@@ -6,14 +6,12 @@ import {
   Log,
 } from 'ethers';
 
-// abis
-import feesCollectedContractABI from '@app/abis/fees_collected_contract_abi.json';
-
 // types
 import type { IFeesCollectedEvent } from '@app/types';
 import type { IOptions } from './types';
 
 // utils
+import createFeesCollectedContract from '@app/utils/createFeesCollectedContract';
 import mapEthersEventLogToFeesCollectedEvent from '@app/utils/mapEthersEventLogToFeesCollectedEvent';
 
 /**
@@ -30,11 +28,10 @@ export default async function queryFeesCollectedEventsWithDelay({
 }: IOptions): Promise<IFeesCollectedEvent[]> {
   return new Promise<IFeesCollectedEvent[]>((resolve) =>
     setTimeout(async () => {
-      const contract: Contract = new Contract(
-        chainConfig.feesCollectedContract.contractAddress,
-        feesCollectedContractABI,
-        new JsonRpcProvider(chainConfig.rpcURL)
-      );
+      const contract: Contract = createFeesCollectedContract({
+        contractAddress: chainConfig.feesCollectedContract.contractAddress,
+        provider: new JsonRpcProvider(chainConfig.rpcURL),
+      });
       const filter: DeferredTopicFilter = contract.filters.FeesCollected();
       const events: (EventLog | Log)[] = await contract.queryFilter(
         filter,
