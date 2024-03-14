@@ -26,17 +26,6 @@ services:
       - plutus_network_test
     ports:
       - "${APP_PORT:-3000}:${APP_PORT:-3000}"
-    volumes:
-      - ./src:/usr/app/src:cached
-      - ./test:/usr/app/test:cached
-      - ./jest.config.ts:/usr/app/jest.config.ts:cached
-      - ./jest.config.e2e.ts:/usr/app/jest.config.e2e.ts:cached
-      - ./jest.config.unit.ts:/usr/app/jest.config.unit.ts:cached
-      - ./nest-cli.json:/usr/app/nest-cli.json:cached
-      - ./package.json:/usr/app/package.json:cached
-      - ./tsconfig.build.json:/usr/app/tsconfig.build.json:cached
-      - ./tsconfig.json:/usr/app/tsconfig.json:cached
-      - ./yarn.lock:/usr/app/yarn.lock:cached
 
   ###
   # database

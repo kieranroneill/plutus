@@ -1,4 +1,4 @@
-import { LoggerService } from '@nestjs/common';
+import { LoggerService, ValidationPipe } from '@nestjs/common';
 import { NestApplication, NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import morgan from 'morgan';
@@ -39,6 +39,7 @@ import createLoggerService from '@app/utils/createLoggerService';
         },
       })
     );
+    app.useGlobalPipes(new ValidationPipe()); // for validating query params
 
     await app.listen(
       configService.get<number>(EnvironmentVariableKeyEnum.AppPort)

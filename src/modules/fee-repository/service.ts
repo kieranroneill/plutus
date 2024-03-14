@@ -21,6 +21,10 @@ export default class FeeRepositoryService {
     return await this.model.create(dtos);
   }
 
+  public async countByChainId(chainId: string): Promise<number> {
+    return await this.model.countDocuments({ chainId }).exec();
+  }
+
   public async create(dto: CreateDTO): Promise<IFeeDocument> {
     return await this.model.create(dto);
   }

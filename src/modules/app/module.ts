@@ -8,6 +8,7 @@ import { EnvironmentVariableKeyEnum } from '@app/enums';
 
 // modules
 import FeesCollectedEventListenerModule from '@app/modules/fees-collected-event-listener/module';
+import FeesModule from '@app/modules/fees/module';
 import VersionsModule from '@app/modules/versions/module';
 
 // providers
@@ -21,6 +22,7 @@ import type { IEnvironmentVariables } from '@app/types';
     /**
      * api
      */
+    FeesModule,
     VersionsModule,
 
     /**

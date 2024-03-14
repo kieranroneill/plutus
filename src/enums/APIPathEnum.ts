@@ -1,4 +1,5 @@
 enum APIPathEnum {
+  Fees = 'fees',
   Versions = 'versions',
 }
 
