@@ -1,24 +1,31 @@
-import { Inject, Injectable, Logger, LoggerService } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+
+// constants
+import { FEE_PAGINATION_MAX_LIMIT } from '@app/constants';
 
 // providers
 import { FeeRepositoryService } from '@app/modules/fee-repository';
 
 // types
-import type { IFeesResponseBody } from './types';
+import type { IFindByPageResult } from '@app/modules/fee-repository';
+import type { IGetByChainIdOptions } from './types';
 
 @Injectable()
 export default class FeesService {
-  constructor(
-    private readonly feeRepositoryService: FeeRepositoryService,
-    @Inject(Logger) private readonly logger: LoggerService
-  ) {}
+  constructor(private readonly feeRepositoryService: FeeRepositoryService) {}
 
-  public async get(chainId: string): Promise<IFeesResponseBody> {
-    const total: number =
-      await this.feeRepositoryService.countByChainId(chainId);
-
-    return {
-      total,
-    };
+  public async getByChainId({
+    chainId,
+    limit,
+    page,
+  }: IGetByChainIdOptions): Promise<IFindByPageResult> {
+    return await this.feeRepositoryService.findByPage({
+      chainId,
+      limit:
+        limit >= 0 && limit <= FEE_PAGINATION_MAX_LIMIT
+          ? limit
+          : FEE_PAGINATION_MAX_LIMIT, // if the limit is out of bounds, use the max limit
+      page,
+    });
   }
 }

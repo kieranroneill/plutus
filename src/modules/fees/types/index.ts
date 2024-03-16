@@ -1,1 +1,2 @@
-export type { default as IFeesResponseBody } from './IFeesResponseBody';
+export type { default as IGetByChainIdOptions } from './IGetByChainIdOptions';
+export type { default as IGetFeesResponseBody } from './IGetFeesResponseBody';

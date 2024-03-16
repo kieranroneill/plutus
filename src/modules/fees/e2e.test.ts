@@ -5,7 +5,7 @@ import { agent as request, Response, Agent } from 'supertest';
 import { APIPathEnum } from '@app/enums';
 
 // types
-import type { IFeesResponseBody } from './types';
+import type { IGetFeesResponseBody } from './types';
 
 describe(`/${APIPathEnum.Fees}`, () => {
   let agent: Agent;
@@ -20,7 +20,7 @@ describe(`/${APIPathEnum.Fees}`, () => {
         .get(`/${APIPathEnum.Fees}/unknown`)
         .expect(HttpStatus.OK);
 
-      expect((response.body as IFeesResponseBody).total).toBe(0);
+      expect((response.body as IGetFeesResponseBody).total).toBe(0);
     });
   });
 });
