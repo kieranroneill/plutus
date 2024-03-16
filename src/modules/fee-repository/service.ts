@@ -5,14 +5,18 @@ import { Model } from 'mongoose';
 import { FEE_PAGINATION_MAX_LIMIT } from '@app/constants';
 
 // dtos
-import { CreateDTO, FindByPageDTO } from './dtos';
+import {
+  CreateOptionsDTO,
+  FindByPageOptionsDTO,
+  FindByPageResultDTO,
+} from './dtos';
 
 // enums
 import { ProviderNameEnum } from '@app/enums';
 
 // types
 import type { IFeeDocument } from '@app/types';
-import type { IFindByPageAggregateResult, IFindByPageResult } from './types';
+import type { IFindByPageAggregateResult } from './types';
 
 @Injectable()
 export default class FeeRepositoryService {
@@ -21,7 +25,7 @@ export default class FeeRepositoryService {
     private readonly model: Model<IFeeDocument>
   ) {}
 
-  public async bulkCreate(dtos: CreateDTO[]): Promise<IFeeDocument[]> {
+  public async bulkCreate(dtos: CreateOptionsDTO[]): Promise<IFeeDocument[]> {
     return await this.model.create(dtos);
   }
 
@@ -29,7 +33,7 @@ export default class FeeRepositoryService {
     return await this.model.countDocuments({ chainId }).exec();
   }
 
-  public async create(dto: CreateDTO): Promise<IFeeDocument> {
+  public async create(dto: CreateOptionsDTO): Promise<IFeeDocument> {
     return await this.model.create(dto);
   }
 
@@ -37,7 +41,7 @@ export default class FeeRepositoryService {
     chainId,
     limit = FEE_PAGINATION_MAX_LIMIT,
     page = 1,
-  }: FindByPageDTO): Promise<IFindByPageResult> {
+  }: FindByPageOptionsDTO): Promise<FindByPageResultDTO> {
     const result: IFindByPageAggregateResult[] =
       await this.model.aggregate<IFindByPageAggregateResult>([
         {
@@ -64,12 +68,12 @@ export default class FeeRepositoryService {
         },
       ]);
 
-    return {
+    return new FindByPageResultDTO({
       data: result[0].data,
       limit,
       page,
       total: result[0].metadata[0].total,
-    };
+    });
   }
 
   public async findLatestBlockNumberForChainId(

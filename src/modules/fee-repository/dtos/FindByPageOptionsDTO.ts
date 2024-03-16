@@ -4,7 +4,7 @@ interface IProps {
   page?: number;
 }
 
-export default class FindByPageDTO {
+export default class FindByPageOptionsDTO {
   public readonly chainId: string;
   public readonly limit?: number;
   public readonly page?: number;

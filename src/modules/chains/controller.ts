@@ -1,13 +1,14 @@
 import { Controller, Get } from '@nestjs/common';
+import { ApiOkResponse } from '@nestjs/swagger';
 
 // configs
 import { chains } from '@app/configs';
 
+// dtos
+import { GetChainsResponseBodyDTO } from './dtos';
+
 // enums
 import { APIPathEnum } from '@app/enums';
-
-// types
-import type { IChainResponseBody } from '@app/types';
 
 // utils
 import mapChainConfigToChainResponseBody from '@app/utils/mapChainConfigToChainResponseBody';
@@ -15,7 +16,11 @@ import mapChainConfigToChainResponseBody from '@app/utils/mapChainConfigToChainR
 @Controller(APIPathEnum.Chains)
 export default class ChainsController {
   @Get()
-  public async get(): Promise<IChainResponseBody[]> {
+  @ApiOkResponse({
+    description: 'Gets the list of chains available.',
+    type: [GetChainsResponseBodyDTO],
+  })
+  public async get(): Promise<GetChainsResponseBodyDTO[]> {
     return chains.map(mapChainConfigToChainResponseBody);
   }
 }

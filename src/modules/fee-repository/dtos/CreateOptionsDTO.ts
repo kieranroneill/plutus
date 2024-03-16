@@ -7,7 +7,7 @@ interface IProps {
   token: string;
 }
 
-export default class CreateDTO {
+export default class CreateOptionsDTO {
   public readonly blockNumber: string;
   public readonly chainId: string;
   public readonly integrator: string;
