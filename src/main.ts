@@ -1,10 +1,11 @@
 import { LoggerService, ValidationPipe } from '@nestjs/common';
 import { NestApplication, NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import morgan from 'morgan';
 
 // enums
-import { EnvironmentVariableKeyEnum } from '@app/enums';
+import { APIPathEnum, EnvironmentVariableKeyEnum } from '@app/enums';
 
 // modules
 import AppModule from '@app/modules/app/module';
@@ -40,6 +41,26 @@ import createLoggerService from '@app/utils/createLoggerService';
       })
     );
     app.useGlobalPipes(new ValidationPipe()); // for validating query params
+
+    // setup open api
+    SwaggerModule.setup(
+      APIPathEnum.Docs,
+      app,
+      SwaggerModule.createDocument(
+        app,
+        new DocumentBuilder()
+          .setTitle(
+            configService.get<string>(EnvironmentVariableKeyEnum.AppName)
+          )
+          .setDescription(
+            `The ${configService.get<string>(EnvironmentVariableKeyEnum.AppName)} API description`
+          )
+          .setVersion(
+            configService.get<string>(EnvironmentVariableKeyEnum.AppVersion)
+          )
+          .build()
+      )
+    );
 
     await app.listen(
       configService.get<number>(EnvironmentVariableKeyEnum.AppPort)
