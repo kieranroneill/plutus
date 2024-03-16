@@ -7,7 +7,9 @@ import * as Joi from 'joi';
 import { EnvironmentVariableKeyEnum } from '@app/enums';
 
 // modules
+import ChainsModule from '@app/modules/chains/module';
 import FeesCollectedEventListenerModule from '@app/modules/fees-collected-event-listener/module';
+import FeesModule from '@app/modules/fees/module';
 import VersionsModule from '@app/modules/versions/module';
 
 // providers
@@ -21,6 +23,8 @@ import type { IEnvironmentVariables } from '@app/types';
     /**
      * api
      */
+    ChainsModule,
+    FeesModule,
     VersionsModule,
 
     /**

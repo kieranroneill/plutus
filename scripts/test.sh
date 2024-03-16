@@ -34,6 +34,7 @@ function main {
     -p plutus_test \
     -f docker-compose.test.yml \
     up \
+    --build \
     -d
 
   # poll the healthchecks

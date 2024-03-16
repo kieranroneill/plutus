@@ -14,9 +14,6 @@ const FeeRepositoryProvider: FactoryProvider = {
   useFactory: async (mongoose: Mongoose) =>
     getModelForClass(FeeSchema, {
       existingMongoose: mongoose,
-      options: {
-        customName: 'fee',
-      },
     }),
 };
 

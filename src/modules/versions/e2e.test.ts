@@ -8,7 +8,7 @@ describe(`/${APIPathEnum.Versions}`, () => {
   let agent: Agent;
 
   beforeAll(async () => {
-    agent = request(`http://127.0.0.1:3000`);
+    agent = request(`http://127.0.0.1:${process.env.APP_PORT}`);
   });
 
   describe(`GET /${APIPathEnum.Versions}`, () => {

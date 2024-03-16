@@ -1,7 +1,12 @@
-import { prop, defaultClasses } from '@typegoose/typegoose';
+import { prop, defaultClasses, modelOptions } from '@typegoose/typegoose';
 
 const { TimeStamps } = defaultClasses;
 
+@modelOptions({
+  options: {
+    customName: 'fee',
+  },
+})
 export default class FeeSchema extends TimeStamps {
   @prop({
     index: true,
