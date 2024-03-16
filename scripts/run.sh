@@ -33,6 +33,7 @@ function main() {
   printf "%b starting docker compose...\n" "${INFO_PREFIX}"
   docker compose \
     up \
+    api \
     --build
 
   exit 0
