@@ -1,6 +1,6 @@
 {
   "name": "plutus",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A RESTful fee aggregator for scraping on-chain fee collection events",
   "main": "dist/main.js",
   "repository": {
