@@ -4,8 +4,8 @@ import { Injectable } from '@nestjs/common';
 import { FEE_PAGINATION_MAX_LIMIT } from '@app/constants';
 
 // dtos
-import { FindByPageResultDTO } from '@app/modules/fee-repository';
-import { GetByChainIdOptionsDTO } from './dtos';
+import { FindByIntegratorAndPageResultDTO } from '@app/modules/fee-repository';
+import { GetByIntegratorOptionsDTO } from './dtos';
 
 // providers
 import { FeeRepositoryService } from '@app/modules/fee-repository';
@@ -14,13 +14,13 @@ import { FeeRepositoryService } from '@app/modules/fee-repository';
 export default class FeesService {
   constructor(private readonly feeRepositoryService: FeeRepositoryService) {}
 
-  public async getByChainId({
-    chainId,
+  public async getByIntegrator({
+    integrator,
     limit,
     page,
-  }: GetByChainIdOptionsDTO): Promise<FindByPageResultDTO> {
-    return await this.feeRepositoryService.findByPage({
-      chainId,
+  }: GetByIntegratorOptionsDTO): Promise<FindByIntegratorAndPageResultDTO> {
+    return await this.feeRepositoryService.findByIntegratorAndPage({
+      integrator,
       limit:
         limit >= 0 && limit <= FEE_PAGINATION_MAX_LIMIT
           ? limit

@@ -8,7 +8,7 @@ interface IProps {
   total: number;
 }
 
-export default class FindByPageResultDTO {
+export default class FindByIntegratorAndPageResultDTO {
   public readonly data: IFeeDocument[];
   public readonly limit: number;
   public readonly page: number;
