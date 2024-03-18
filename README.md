@@ -100,10 +100,14 @@ This documentation outlines the available endpoints available.
 
 ### 3.2. Useful commands
 
-| Command           | Description                                                                                                                              |
-|-------------------|------------------------------------------------------------------------------------------------------------------------------------------|
-| `yarn setup`      | Creates an `.env` file to the `.config/` directory.                                                                                      |
-| `yarn start`      | Runs setup and starts Docker Compose. Intended for development purposes only.                                                            |
+| Command          | Description                                                                                                                                               |
+|------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `yarn setup`     | Creates an `.env` file to the `.config/` directory.                                                                                                       |
+| `yarn start`     | Runs setup and starts Docker Compose. Intended for development purposes only.                                                                             |
+| `yarn test`      | Runs the test script that starts up the Docker Compose test configuration and runs both unit and e2e tests. E2e tests require a running API and database. |
+| `yarn test:e2e`  | Runs the e2e tests (all files that are named `e2e.test.ts`). This command requires a running API at https://127.0.0.1:3000 and a database.                |
+| `yarn test:unit` | Simply runs the unit tests. These are self-contained and do not require any external dependencies.                                                        |
+
 
 <sup>[Back to top ^][table-of-contents]</sup>
 

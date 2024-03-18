@@ -7,8 +7,8 @@ import { FEE_PAGINATION_MAX_LIMIT } from '@app/constants';
 // dtos
 import {
   CreateOptionsDTO,
-  FindByPageOptionsDTO,
-  FindByPageResultDTO,
+  FindByIntegratorAndPageOptionsDTO,
+  FindByIntegratorAndPageResultDTO,
 } from './dtos';
 
 // enums
@@ -37,16 +37,16 @@ export default class FeeRepositoryService {
     return await this.model.create(dto);
   }
 
-  public async findByPage({
-    chainId,
+  public async findByIntegratorAndPage({
+    integrator,
     limit = FEE_PAGINATION_MAX_LIMIT,
     page = 1,
-  }: FindByPageOptionsDTO): Promise<FindByPageResultDTO> {
+  }: FindByIntegratorAndPageOptionsDTO): Promise<FindByIntegratorAndPageResultDTO> {
     const result: IFindByPageAggregateResult[] =
       await this.model.aggregate<IFindByPageAggregateResult>([
         {
           $match: {
-            chainId,
+            integrator,
           },
         },
         {
@@ -68,11 +68,11 @@ export default class FeeRepositoryService {
         },
       ]);
 
-    return new FindByPageResultDTO({
+    return new FindByIntegratorAndPageResultDTO({
       data: result[0].data,
       limit,
       page,
-      total: result[0].metadata[0].total,
+      total: result[0].metadata[0]?.total || 0,
     });
   }
 

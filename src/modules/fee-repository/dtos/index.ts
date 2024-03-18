@@ -1,3 +1,3 @@
 export { default as CreateOptionsDTO } from './CreateOptionsDTO';
-export { default as FindByPageOptionsDTO } from './FindByPageOptionsDTO';
-export { default as FindByPageResultDTO } from './FindByPageResultDTO';
+export { default as FindByIntegratorAndPageOptionsDTO } from './FindByIntegratorAndPageOptionsDTO';
+export { default as FindByIntegratorAndPageResultDTO } from './FindByIntegratorAndPageResultDTO';

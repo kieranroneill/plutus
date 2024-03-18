@@ -6,7 +6,7 @@ import type { IFeeDocument } from '@app/types';
 interface IProps {
   data: IFeeDocument[];
   limit: number;
-  nextPageURL: string;
+  nextPageURL: string | null;
   page: number;
   total: number;
 }
@@ -23,7 +23,7 @@ export default class GetFeesResponseBodyDTO {
   @ApiProperty({
     description: 'The URL to the next page.',
   })
-  public readonly nextPageURL: string;
+  public readonly nextPageURL: string | null;
   @ApiProperty({
     description: 'The current page.',
   })
