@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/kieranroneill/plutus/compare/v1.1.0...v1.2.0) (2024-03-18)
+
+
+### Features
+
+* implement open api ([#4](https://github.com/kieranroneill/plutus/issues/4)) ([3f90eac](https://github.com/kieranroneill/plutus/commit/3f90eacd39887aea2145cfe4fc571b3e23bf00a7))
+
 # [1.1.0](https://github.com/kieranroneill/plutus/compare/v1.0.0...v1.1.0) (2024-03-16)
 
 
