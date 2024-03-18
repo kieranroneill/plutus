@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/kieranroneill/plutus/compare/v1.2.0...v1.3.0) (2024-03-18)
+
+
+### Features
+
+* get fees by integrator ([#5](https://github.com/kieranroneill/plutus/issues/5)) ([8382d15](https://github.com/kieranroneill/plutus/commit/8382d154c9775dba0cc2b44b6fa5d422041ed4c1))
+
 # [1.2.0](https://github.com/kieranroneill/plutus/compare/v1.1.0...v1.2.0) (2024-03-18)
 
 
