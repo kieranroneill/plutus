@@ -25,7 +25,7 @@ import Service from './service';
 import type { IEnvironmentVariables } from '@app/types';
 
 // utils
-import parseVersion from '@app/utils/parseVersion';
+import createAPIPathPrefix from '@app/utils/createAPIPathPrefix';
 
 @Controller(APIPathEnum.Fees)
 export default class FeesController {
@@ -54,16 +54,13 @@ export default class FeesController {
           page: query.page ? parseInt(query.page, 10) : 1,
         })
       );
-    const [majorVersion] = parseVersion(
-      this.configService.get<string>(EnvironmentVariableKeyEnum.AppVersion)
-    );
 
     return new GetFeesResponseBodyDTO({
       ...result,
       // only show the next page url
       nextPageURL:
         result.total > 0 && result.page < Math.ceil(result.total / result.limit)
-          ? `${req.protocol}://${req.get('host')}/${APIPathEnum.API}/v${majorVersion}/${APIPathEnum.Fees}/${integrator}?limit=${result.limit}&page=${result.page + 1}`
+          ? `${req.protocol}://${req.get('host')}/${createAPIPathPrefix(this.configService.get<string>(EnvironmentVariableKeyEnum.AppVersion))}/${APIPathEnum.Fees}/${integrator}?limit=${result.limit}&page=${result.page + 1}`
           : null,
     });
   }

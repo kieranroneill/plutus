@@ -11,10 +11,12 @@ import { GetFeesResponseBodyDTO } from './dtos';
 import { APIPathEnum } from '@app/enums';
 
 // helpers
+import createAPIPathPrefix from '@app/utils/createAPIPathPrefix';
 import seedDatabase from '../../../test/helpers/seedDatabase';
 
 describe(`/${APIPathEnum.Fees}`, () => {
   const integrator: string = '0xBB59e1AD8607F2131A9cA41673150303a2641259';
+  const path: string = `${createAPIPathPrefix(process.env.APP_VERSION)}/${APIPathEnum.Fees}`;
   let agent: Agent;
 
   beforeAll(async () => {
@@ -28,7 +30,7 @@ describe(`/${APIPathEnum.Fees}`, () => {
   describe(`GET /${APIPathEnum.Fees}`, () => {
     it('should return empty values for an unknown integrator', async () => {
       const response: Response = await agent
-        .get(`/${APIPathEnum.Fees}/unknown`)
+        .get(`/${path}/unknown`)
         .expect(HttpStatus.OK);
 
       expect((response.body as GetFeesResponseBodyDTO).data).toHaveLength(0);
@@ -40,7 +42,7 @@ describe(`/${APIPathEnum.Fees}`, () => {
       // arrange
       // act
       const response: Response = await agent
-        .get(`/${APIPathEnum.Fees}/${integrator}`)
+        .get(`/${path}/${integrator}`)
         .expect(HttpStatus.OK);
       // assert
       const nextPageURL: URL = new URL(
@@ -65,7 +67,7 @@ describe(`/${APIPathEnum.Fees}`, () => {
       const page: number = 1;
       // act
       const response: Response = await agent
-        .get(`/${APIPathEnum.Fees}/${integrator}?page=${page}&limit=255`)
+        .get(`/${path}/${integrator}?page=${page}&limit=255`)
         .expect(HttpStatus.OK);
       // assert
       const nextPageURL: URL = new URL(
@@ -90,7 +92,7 @@ describe(`/${APIPathEnum.Fees}`, () => {
       const page: number = 2;
       // act
       const response: Response = await agent
-        .get(`/${APIPathEnum.Fees}/${integrator}?page=${page}`)
+        .get(`/${path}/${integrator}?page=${page}`)
         .expect(HttpStatus.OK);
       // assert
       const nextPageURL: URL = new URL(
