@@ -68,25 +68,11 @@ export default class FeeRepositoryService {
         },
       ]);
 
-    // if the results are empty, return an empty result
-    if (
-      !result[0] ||
-      result[0].metadata.length <= 0 ||
-      result[0].data.length <= 0
-    ) {
-      return new FindByIntegratorAndPageResultDTO({
-        data: [],
-        limit,
-        page,
-        total: 0,
-      });
-    }
-
     return new FindByIntegratorAndPageResultDTO({
       data: result[0].data,
       limit,
       page,
-      total: result[0].metadata[0].total,
+      total: result[0].metadata[0]?.total || 0,
     });
   }
 

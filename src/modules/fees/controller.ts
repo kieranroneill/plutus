@@ -1,4 +1,5 @@
 import { Controller, Get, Param, Query, Req } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse } from '@nestjs/swagger';
 import type { Request } from 'express';
 
@@ -15,14 +16,23 @@ import {
 } from './dtos';
 
 // enums
-import { APIPathEnum } from '@app/enums';
+import { APIPathEnum, EnvironmentVariableKeyEnum } from '@app/enums';
 
-// services
+// providers
 import Service from './service';
+
+// types
+import type { IEnvironmentVariables } from '@app/types';
+
+// utils
+import parseVersion from '@app/utils/parseVersion';
 
 @Controller(APIPathEnum.Fees)
 export default class FeesController {
-  constructor(private readonly service: Service) {}
+  constructor(
+    private readonly configService: ConfigService<IEnvironmentVariables, true>,
+    private readonly service: Service
+  ) {}
 
   @Get(':integrator')
   @ApiOkResponse({
@@ -44,12 +54,16 @@ export default class FeesController {
           page: query.page ? parseInt(query.page, 10) : 1,
         })
       );
+    const [majorVersion] = parseVersion(
+      this.configService.get<string>(EnvironmentVariableKeyEnum.AppVersion)
+    );
 
     return new GetFeesResponseBodyDTO({
       ...result,
+      // only show the next page url
       nextPageURL:
-        result.total > 0
-          ? `${req.protocol}://${req.get('host')}${req.originalUrl}?limit=${result.limit}&page=${result.page + 1}`
+        result.total > 0 && result.page < Math.ceil(result.total / result.limit)
+          ? `${req.protocol}://${req.get('host')}/${APIPathEnum.API}/v${majorVersion}/${APIPathEnum.Fees}/${integrator}?limit=${result.limit}&page=${result.page + 1}`
           : null,
     });
   }
