@@ -16,6 +16,8 @@ export default class DatabaseConnectionResponseBodyDTO {
   public readonly status: ConnectionStatusEnum;
   @ApiProperty({
     description: 'The type of database.',
+    enum: ConnectionStatusEnum,
+    enumName: 'ConnectionStatusEnum',
   })
   public readonly type: string;
   @ApiProperty({

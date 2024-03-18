@@ -38,8 +38,9 @@
   - [2.2. Setting up environment variables (optional)](#22-setting-up-environment-variables-optional)
   - [2.3. Running locally](#23-running-locally)
 * [3. Appendix](#-3-appendix)
-  - [3.1. Useful commands](#31-useful-commands)
-  - [3.2. Docker Compose service directory](#32-docker-compose-service-directory)
+  - [3.1. Documentation](#31-documentation)
+  - [3.2. Useful commands](#32-useful-commands)
+  - [3.3. Docker Compose service directory](#33-docker-compose-service-directory)
 * [4. How To Contribute](#-4-how-to-contribute)
 * [5. License](#-5-license)
 
@@ -85,13 +86,19 @@ yarn start
 
 > ⚠️ **NOTE:** The `yarn start` command will run/re-run the setup script, but will not overwrite the file `.env` that was created and edited in section [1.2.](#22-setting-up-environment-variables-optional)
 
-2. Navigate to [http://localhost:3000/versions](http://localhost:3000/versions) to make sure everything is runnning.
+2. Navigate to [http://localhost:3000/api/v1/versions](http://localhost:3000/api/v1/versions) to make sure everything is running.
 
 <sup>[Back to top ^][table-of-contents]</sup>
 
 ## 📑 3. Appendix
 
-### 3.1. Useful commands
+### 3.1. Documentation
+
+The API comes with some OpenAPI documentation. This can be accessed at [http://localhost:3000/api](http://localhost:3000/api).
+
+This documentation outlines the available endpoints available.
+
+### 3.2. Useful commands
 
 | Command           | Description                                                                                                                              |
 |-------------------|------------------------------------------------------------------------------------------------------------------------------------------|
@@ -100,7 +107,7 @@ yarn start
 
 <sup>[Back to top ^][table-of-contents]</sup>
 
-### 3.2. Docker Compose service directory
+### 3.3. Docker Compose service directory
 
 Here is a list of all the localhost port mappings for each of the apps
 

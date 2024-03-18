@@ -15,11 +15,13 @@ import type { IEnvironmentVariables, ILogLevel } from '@app/types';
 
 // utils
 import createLoggerService from '@app/utils/createLoggerService';
+import parseVersion from '@app/utils/parseVersion';
 
 (async () => {
   let app: NestApplication;
   let configService: ConfigService<IEnvironmentVariables, true>;
   let logger: LoggerService;
+  let versions: string[];
 
   try {
     app = await NestFactory.create(AppModule);
@@ -27,6 +29,9 @@ import createLoggerService from '@app/utils/createLoggerService';
     logger = createLoggerService(
       configService.get<string>(EnvironmentVariableKeyEnum.AppName),
       configService.get<ILogLevel>(EnvironmentVariableKeyEnum.LogLevel)
+    );
+    versions = parseVersion(
+      configService.get<string>(EnvironmentVariableKeyEnum.AppVersion)
     );
 
     // setup middleware
@@ -40,11 +45,12 @@ import createLoggerService from '@app/utils/createLoggerService';
         },
       })
     );
+    app.setGlobalPrefix(`${APIPathEnum.API}/v${versions[0]}`);
     app.useGlobalPipes(new ValidationPipe()); // for validating query params
 
     // setup open api
     SwaggerModule.setup(
-      APIPathEnum.Docs,
+      APIPathEnum.API,
       app,
       SwaggerModule.createDocument(
         app,

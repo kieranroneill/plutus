@@ -13,6 +13,7 @@ interface IProps {
 export default class VersionResponseBodyDTO {
   @ApiProperty({
     description: 'Database connection information.',
+    type: DatabaseConnectionResponseBodyDTO,
   })
   public readonly databases: DatabaseConnectionResponseBodyDTO[];
   @ApiProperty({

@@ -1,6 +1,6 @@
 enum APIPathEnum {
+  API = 'api',
   Chains = 'chains',
-  Docs = 'docs',
   Fees = 'fees',
   Versions = 'versions',
 }
