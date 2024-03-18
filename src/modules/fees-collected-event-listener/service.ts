@@ -18,7 +18,7 @@ import {
 } from '@app/constants';
 
 // dtos
-import { CreateDTO as CreateFeeDTO } from '@app/modules/fee-repository';
+import { CreateOptionsDTO } from '@app/modules/fee-repository';
 import { FeesCollectedQueryEventPayloadDTO } from './dtos';
 
 // enums
@@ -203,7 +203,7 @@ export default class FeeCollectdEventListenerService implements OnModuleInit {
       await this.feeRepositoryService.bulkCreate(
         events.map(
           ({ blockNumber, integrator, integratorFee, lifiFee, token }) =>
-            new CreateFeeDTO({
+            new CreateOptionsDTO({
               blockNumber: String(blockNumber),
               chainId,
               integrator,

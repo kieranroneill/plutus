@@ -3,12 +3,12 @@ import { Injectable } from '@nestjs/common';
 // constants
 import { FEE_PAGINATION_MAX_LIMIT } from '@app/constants';
 
+// dtos
+import { FindByPageResultDTO } from '@app/modules/fee-repository';
+import { GetByChainIdOptionsDTO } from './dtos';
+
 // providers
 import { FeeRepositoryService } from '@app/modules/fee-repository';
-
-// types
-import type { IFindByPageResult } from '@app/modules/fee-repository';
-import type { IGetByChainIdOptions } from './types';
 
 @Injectable()
 export default class FeesService {
@@ -18,7 +18,7 @@ export default class FeesService {
     chainId,
     limit,
     page,
-  }: IGetByChainIdOptions): Promise<IFindByPageResult> {
+  }: GetByChainIdOptionsDTO): Promise<FindByPageResultDTO> {
     return await this.feeRepositoryService.findByPage({
       chainId,
       limit:
