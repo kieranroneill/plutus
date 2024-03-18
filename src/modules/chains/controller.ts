@@ -17,7 +17,7 @@ import mapChainConfigToChainResponseBody from '@app/utils/mapChainConfigToChainR
 export default class ChainsController {
   @Get()
   @ApiOkResponse({
-    description: 'Gets the list of chains available.',
+    description: 'Gets the list of the available chains.',
     type: [GetChainsResponseBodyDTO],
   })
   public async get(): Promise<GetChainsResponseBodyDTO[]> {
